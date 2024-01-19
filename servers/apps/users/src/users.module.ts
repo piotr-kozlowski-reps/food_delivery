@@ -8,6 +8,9 @@ import {
 } from '@nestjs/apollo';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '../../../prisma/Prisma.service';
+import { UsersResolver } from './user.resolver';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -17,8 +20,15 @@ import { JwtService } from '@nestjs/jwt';
         federation: 2,
       },
     }),
+    EmailModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService, ConfigService, JwtService],
+  providers: [
+    UsersService,
+    ConfigService,
+    JwtService,
+    PrismaService,
+    UsersResolver,
+  ],
 })
 export class UsersModule {}

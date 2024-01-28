@@ -70,7 +70,7 @@ export class UsersService {
     return { activation_token, response };
   }
 
-  //create activatio token
+  //create activation token
   async createActivationToken(user: UserData) {
     const activationCode = Math.floor(1000 + Math.random() * 9000).toString();
 
@@ -143,6 +143,29 @@ export class UsersService {
     hashedPassword: string,
   ): Promise<boolean> {
     return await bcrypt.compare(password, hashedPassword);
+  }
+
+  //get logged in user
+  async getLoggedInUser(req: any) {
+    const user = req.user;
+    const accessToken = req.accesstoken;
+    const refreshToken = req.refreshtoken;
+
+    return { user, accessToken, refreshToken };
+  }
+
+  //logout user
+  async Logout(req: any) {
+    console.log('in logout');
+
+    console.log(req.user);
+    console.log(req.accesstoken);
+    console.log(req.refreshtoken);
+
+    req.user = null;
+    req.accesstoken = null;
+    req.refreshtoken = null;
+    return { message: 'Logout successfully.' };
   }
 
   //get all users service

@@ -5,6 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
+import { useMutation } from "@apollo/client";
+import { REGISTER_USER } from "@/src/graphql/actions/register.action";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters long!"),
@@ -21,6 +24,9 @@ const Signup = ({
 }: {
   setActiveState: (e: string) => void;
 }) => {
+  const [registerUserMutation, { loading, error, data }] =
+    useMutation(REGISTER_USER);
+
   const {
     register,
     handleSubmit,
@@ -32,8 +38,17 @@ const Signup = ({
 
   const [show, setShow] = useState(false);
 
-  const onSubmit = (data: SignupSchema) => {
-    console.log(data);
+  const onSubmit = async (data: SignupSchema) => {
+    try {
+      const response = await registerUserMutation({
+        variables: data,
+      });
+
+      localStorage.setItem("activation_token", response.data.activation_token);
+      toast.success("Please check your email to activate your account!");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
     reset();
   };
 
@@ -107,7 +122,7 @@ const Signup = ({
           <input
             type="submit"
             value="Signup"
-            // disabled={isSubmitting || loading}
+            disabled={isSubmitting || loading}
             className={`${styles.button} mt-3`}
           />
         </div>

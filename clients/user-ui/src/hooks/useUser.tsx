@@ -6,7 +6,7 @@ const useUser = () => {
 
   console.log({ data });
 
-  return { loading, user: data.getLoggedInUser.user };
+  return { loading, user: data?.getLoggedInUser?.user };
 };
 
 export default useUser;

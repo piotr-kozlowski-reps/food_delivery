@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 import { LOGIN_USER } from "@/src/graphql/actions/login.action";
 import Cookies from "js-cookie";
+import { signIn } from "next-auth/react";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -37,28 +38,28 @@ const Login = ({
   const [show, setShow] = useState(false);
 
   const onSubmit = async (data: LoginSchema) => {
-    try {
-      const loginData = {
-        email: data.email,
-        password: data.password,
-      };
-      const response = await Login({ variables: loginData });
+    console.log("onSubmit - login");
 
-      if (response.data.Login.user) {
-        toast.success("Login successful!");
-        Cookies.set("refresh_token", response.data.Login.refreshToken);
-        Cookies.set("access_token", response.data.Login.accessToken);
-        setOpen(false);
-        reset();
-        window.location.reload();
-      } else {
-        toast.error(response.data.Login.error.message);
-      }
-    } catch (error: any) {
-      console.log(error);
-      toast.error(error.message);
+    const loginData = {
+      email: data.email,
+      password: data.password,
+    };
+    const response = await Login({
+      variables: loginData,
+    });
+
+    console.log({ response });
+
+    if (response.data.Login.user) {
+      toast.success("Login Successful!");
+      Cookies.set("refresh_token", response.data.Login.refreshToken);
+      Cookies.set("access_token", response.data.Login.accessToken);
+      setOpen(false);
+      reset();
+      // window.location.reload();
+    } else {
+      toast.error(response.data.Login.error.message);
     }
-    reset();
   };
 
   return (
@@ -107,7 +108,7 @@ const Login = ({
         <div className="w-full mt-5">
           <span
             className={`${styles.label} text-[#2190ff] block text-right cursor-pointer`}
-            // onClick={() => setActiveState("Forgot-Password")}
+            onClick={() => setActiveState("Forgot-Password")}
           >
             Forgot your password?
           </span>
@@ -124,7 +125,7 @@ const Login = ({
         </h5>
         <div
           className="flex items-center justify-center my-3"
-          // onClick={() => signIn()}
+          onClick={() => signIn()}
         >
           <FcGoogle size={30} className="mr-2 cursor-pointer" />
         </div>
